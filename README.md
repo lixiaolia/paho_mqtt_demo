@@ -21,7 +21,21 @@ sudo cmake --build build/ --target install
 sudo ldconfig
 ```
 
-下载与安装 Mosquitto：
+下载与安装 Mosquitto，官网：http://mosquitto.org/
 
-http://mosquitto.org/
+```bash
+tar -zvxf mosquitto-2.0.7.tar.gz
+cd mosquitto-2.0.7
+make
+sudo make install
+```
+
+安装可选的依赖库cJSON：
+
+```bash
+git clone https://github.com/DaveGamble/cJSON.git
+cd cJSON
+make all
+sudo make install
+```
 
