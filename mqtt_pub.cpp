@@ -1,4 +1,5 @@
 // MQTT 发布者
+#include "config.h"
 #include <thread>
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,8 +7,11 @@
 #include <MQTTClient.h>
 #include <unistd.h>
 
-#define NUM_THREADS 2
+#ifdef WITH_SSL
+#define ADDRESS "ssl://localhost:8883"
+#else
 #define ADDRESS "tcp://localhost:1883"
+#endif
 #define CLIENTID "hello_pub"
 #define TOPIC "Hello"
 #define PAYLOAD "Hello, World!"
@@ -72,6 +76,15 @@ int main(int argc, char* argv[])
     conn_opts.cleansession = 1;
     conn_opts.username = USERNAME;
     conn_opts.password = PASSWORD;
+#ifdef WITH_SSL
+    MQTTClient_SSLOptions ssl_opts = MQTTClient_SSLOptions_initializer;
+    conn_opts.ssl = &ssl_opts;
+    conn_opts.ssl->trustStore = "/home/lxl/Develop/myCA/ca.crt";
+    conn_opts.ssl->keyStore = "/home/lxl/Develop/myCA/client.crt";
+    conn_opts.ssl->privateKey = "/home/lxl/Develop/myCA/client.key";
+    conn_opts.ssl->enableServerCertAuth = true; // 双向认证
+#endif
+
     MQTTClient_setCallbacks(client, NULL, connlost, msgarrvd, delivered);
 
     if ((rc = MQTTClient_connect(client, &conn_opts)) != MQTTCLIENT_SUCCESS)
